@@ -40,6 +40,20 @@ public class AccountService {
         accountRepository.deleteById(cbu);
     }
 
+    public Double applyPromotion(Double sum){
+        double promo;
+        if(sum >= 2000){
+            promo = sum * 0.10;
+            if(promo >= 500){
+                return sum + 500;
+            }else{
+                return sum + promo;
+            }
+        }else{
+            return sum;
+        }
+    }
+
     @Transactional
     public Account withdraw(Long cbu, Double sum) {
         Account account = accountRepository.findAccountByCbu(cbu);
@@ -47,7 +61,6 @@ public class AccountService {
         if (account.getBalance() < sum) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-
         account.setBalance(account.getBalance() - sum);
         accountRepository.save(account);
 
@@ -63,13 +76,13 @@ public class AccountService {
         if (sum <= 0) {
             throw new DepositNegativeSumException("Cannot deposit negative sums");
         }
-
         Account account = accountRepository.findAccountByCbu(cbu);
-        account.setBalance(account.getBalance() + sum);
+        Double sumWithPromo = applyPromotion(sum);
+        account.setBalance(account.getBalance() + sumWithPromo);
         accountRepository.save(account);
 
 
-        Transaction transaction = new Transaction(cbu, sum, "deposit");
+        Transaction transaction = new Transaction(cbu, sumWithPromo, "deposit");
         transactionService.createTransaction(transaction);
 
         return account;
