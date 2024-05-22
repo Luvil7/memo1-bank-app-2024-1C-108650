@@ -19,11 +19,18 @@ public class TransactionService {
     @Autowired
     private TransactionRepo transactionRepo;
 
-    public Transaction createTransaction(Transaction transaction) {return transactionRepo.save(transaction);}
+    public Transaction createTransaction(Transaction transaction) {
+        return transactionRepo.save(transaction);}
 
-    public Transaction findById(Long id) {return transactionRepo.findById(id).orElse(null);}
+    public Transaction findById(Long id) {
+        return transactionRepo.findById(id).orElse(null);}
 
-    public List<Transaction> getTransactionsByCbu(Long cbu) {return transactionRepo.findTransactionByCbu(cbu);}
+    public List<Transaction> getTransactionsByCbu(Long cbu) {
+        return transactionRepo.findTransactionByCbu(cbu);}
+
+    public void deleteTransactionById(Long id) {
+        transactionRepo.deleteById(id);
+    }
 
 }
 

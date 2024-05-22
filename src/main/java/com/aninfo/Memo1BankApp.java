@@ -82,13 +82,30 @@ public class Memo1BankApp {
 
 	@GetMapping("/transactions/id/{id}")
 	public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
-		Transaction transactionOptional = transactionService.findById(id);
-		return ResponseEntity.ok(transactionOptional);
+		Transaction transaction = transactionService.findById(id);
+		return ResponseEntity.ok(transaction);
 	}
 
 	@GetMapping("/transactions/cbu/{cbu}")
 	public List<Transaction> getTransactionsByAccount(@PathVariable Long cbu) {
 		return transactionService.getTransactionsByCbu(cbu);
+	}
+
+	@DeleteMapping("/transactions/{id}")
+	public ResponseEntity<Transaction> deleteTransaction(@PathVariable Long id) {
+		Transaction transaction = transactionService.findById(id);
+		Long cbu = transaction.getCbu();
+
+		if(transaction.getType().equals("deposit")){
+			accountService.withdraw(cbu, transaction.getAmount());
+		}
+		else{
+			accountService.deposit(cbu, transaction.getAmount());
+		}
+
+		transactionService.deleteTransactionById(id);
+
+		return ResponseEntity.ok(transaction);
 	}
 
 
