@@ -2,6 +2,7 @@ package com.aninfo.model;
 
 import javax.persistence.*;
 
+
 @Entity
 public class Transaction {
 
@@ -13,12 +14,12 @@ public class Transaction {
 
     private Double amount;
 
-    private String type;
+    private TransactionType type;
 
     public Transaction(){
     }
 
-    public Transaction(Long cbu, Double amount, String type) {
+    public Transaction(Long cbu, Double amount, TransactionType type) {
         this.cbu = cbu;
         this.amount = amount;
         this.type = type;
@@ -36,7 +37,7 @@ public class Transaction {
         return id;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 

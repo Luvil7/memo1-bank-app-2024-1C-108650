@@ -96,13 +96,7 @@ public class Memo1BankApp {
 		Transaction transaction = transactionService.findById(id);
 		Long cbu = transaction.getCbu();
 
-		if(transaction.getType().equals("deposit")){
-			accountService.withdraw(cbu, transaction.getAmount());
-		}
-		else{
-			accountService.deposit(cbu, transaction.getAmount());
-		}
-
+		accountService.rollBack(transaction, cbu);
 		transactionService.deleteTransactionById(id);
 
 		return ResponseEntity.ok(transaction);

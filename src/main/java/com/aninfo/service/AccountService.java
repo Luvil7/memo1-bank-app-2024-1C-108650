@@ -4,6 +4,7 @@ import com.aninfo.exceptions.DepositNegativeSumException;
 import com.aninfo.exceptions.InsufficientFundsException;
 import com.aninfo.model.Account;
 import com.aninfo.model.Transaction;
+import com.aninfo.model.TransactionType;
 import com.aninfo.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,18 @@ public class AccountService {
         }
     }
 
+    public void rollBack(Transaction transaction, Long cbu){
+        
+        if(transaction.getType().equals(TransactionType.DEPOSIT)){
+			withdraw(cbu, transaction.getAmount());
+		}
+		else{
+			deposit(cbu, transaction.getAmount());
+		}
+
+    }
+
+
     @Transactional
     public Account withdraw(Long cbu, Double sum) {
         Account account = accountRepository.findAccountByCbu(cbu);
@@ -64,7 +77,7 @@ public class AccountService {
         account.setBalance(account.getBalance() - sum);
         accountRepository.save(account);
 
-        Transaction transaction = new Transaction(cbu, sum, "withdraw");
+        Transaction transaction = new Transaction(cbu, sum, TransactionType.WITHDRAW);
         transactionService.createTransaction(transaction);
 
         return account;
@@ -82,7 +95,7 @@ public class AccountService {
         accountRepository.save(account);
 
 
-        Transaction transaction = new Transaction(cbu, sumWithPromo, "deposit");
+        Transaction transaction = new Transaction(cbu, sumWithPromo, TransactionType.DEPOSIT);
         transactionService.createTransaction(transaction);
 
         return account;
